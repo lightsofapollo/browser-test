@@ -1,0 +1,85 @@
+#! /usr/bin/env node --harmony
+
+var co = require('co');
+var debug = require('debug')('browser-test:launcher:firefox');
+var Promise = require('promise');
+var fs = require('co-fs');
+var exec = require('child_process').exec;
+var tmpDir = Promise.denodeify(require('tmp').dir);
+var spawn = require('child_process').spawn;
+
+var COMMON_PATHS = [
+  // XXX: Only common paths included for OSX... on linux which should work just
+  // fine.
+  '/Applications/FirefoxNightly.app/Contents/MacOS/firefox',
+  '/Applications/FirefoxAurora.app/Contents/MacOS/firefox',
+  '/Applications/Firefox.app/Contents/MacOS/firefox'
+];
+
+function* searchCommon() {
+  var firefoxes = yield COMMON_PATHS.map(fs.exists);
+  for (var i = 0; i < firefoxes.length; i ++) {
+    if (firefoxes[i]) return COMMON_PATHS[i];
+  }
+}
+
+function* which() {
+  return yield Promise.denodeify(exec)('which firefox');
+}
+
+co(function*() {
+
+  if (!process.argv[2]) {
+    console.error('First argument must be a url');
+    return process.exit(1);
+  }
+
+  // url to launch in firefox
+  var url = process.argv[2];
+
+  // find firefox
+  var firefox = null;
+  if (!firefox) {
+    debug('could not find firefox via which falling back to constants');
+    firefox = yield searchCommon();
+  }
+
+  if (!firefox) {
+    console.error('Could not locate firefox! Add it to your path');
+    process.exit(1);
+    return;
+  }
+
+  // profile directory must be a clean tmp directory
+  var profileDir = yield tmpDir({
+    // don't keep around directories
+    unsafeCleanup: true
+  });
+
+  var firefoxProc = spawn(
+    firefox,
+    ['--profile', profileDir, process.argv[2]],
+    {
+      env: process.env,
+      stdio: 'inherit'
+    }
+  );
+
+  // crash detection logic
+  var intendedExit = false;
+
+  process.once('SIGINT', function() {
+    intendedExit = true;
+  });
+
+  firefoxProc.once('exit', function() {
+    if (!intendedExit) {
+      // XXX: This should keep around profile directories...
+      console.error('Browser crash detected!');
+      process.exit(1);
+    }
+  });
+
+})(function(err) {
+  if (err) throw err;
+});
