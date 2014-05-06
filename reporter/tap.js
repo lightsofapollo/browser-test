@@ -12,6 +12,10 @@ function tap(inputStream, outputStream) {
     ));
   });
 
+  inputStream.on('log', function(evt) {
+    outputStream.write('# LOG: ' + evt.message + ' - ' + evt.stack + '\n');
+  });
+
   inputStream.on('test end', function testEnd(event) {
     var state = event.state;
     var message;
