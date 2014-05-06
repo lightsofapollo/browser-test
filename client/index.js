@@ -1,4 +1,6 @@
 var client = require('./client');
+var createSocket = require('./socket');
+
 var qs = require('querystring');
 var config = qs.parse(document.location.search);
 
@@ -13,14 +15,9 @@ function buildClient() {
     return client(config);
   }
 
-  if (!window.io) {
-    console.error('browser-test: `io` is not available on window... include socket.io');
-    return client(config);
-  }
-
   console.log('browser-test: enabled connecting to', queryParams.url);
 
-  config.io = io(queryParams.url);
+  config.socket = createSocket(queryParams.url);
   return client(config);
 }
 

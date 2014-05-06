@@ -6,33 +6,13 @@ function assert(truthy, message) {
   if (!truthy) throw new Error(message);
 }
 
-function queueEmits(io) {
-  var emit = io.emit.bind(io);
-  if (io.connected) return emit;
-
-  var ready = false;
-  var queue = [];
-
-  io.once('connect', function() {
-    var message;
-    ready = true;
-    while ((message = queue.shift())) emit.apply(io, message);
-  });
-
-  return function() {
-    var args = Array.slice(arguments);
-    if (ready) return emit.apply(io, args);
-    queue.push(args);
-  };
-}
-
 function client(config) {
   // check for the socket.io configuration
-  var io = config.io;
+  var socket = config.socket;
   var emit;
 
-  if (io) {
-    emit = queueEmits(io);
+  if (socket) {
+    emit = socket.emit;
   } else {
     emit = debug('browser-test:offline');
   }

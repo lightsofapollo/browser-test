@@ -1,10 +1,14 @@
 #! /usr/bin/env node --harmony
 
+var WSServer = require('websocket').server;
+
 var koa = require('koa');
 var socketio = require('socket.io');
 var static = require('koa-static');
+var mount = require('koa-mount');
 var tap = require('../reporter/tap');
 var program = require('commander');
+var wsReader = require('../server/ws_emitter');
 
 program.
   // XXX: This setting is purely for proof of concept
@@ -17,18 +21,22 @@ program.
 
 var app = koa();
 
-// XXX: We should be able to use any server or none at all based on command line
-//     flags
+// the client specific to this version of browser test
+app.use(mount('/browser_test/', static(__dirname + '/../build')));
+
+// default simple server just serves up current folder
 app.use(static(process.cwd()));
 
 var server = app.listen(0);
-var io = socketio(server);
+var ws = new WSServer({
+  httpServer: server,
+  autoAcceptConnections: true
+});
 
 // XXX: Allow passing domains, etc...
 var port = server.address().port;
 var serverUrl = 'http://localhost:' + port;
 var wsUrl = 'ws://localhost:' + port + '/test';
-
 
 var queryString = require('querystring');
 var url = require('url');
@@ -60,10 +68,11 @@ var browserProc = spawn(
   }
 );
 
+ws.once('connect', function(socket) {
+  var emitter = wsReader(socket);
+  tap(emitter, process.stdout);
 
-io.of('/test').on('connection', function(socket) {
-  tap(socket, process.stdout);
-  socket.once('finished', function(event) {
+  emitter.once('finished', function(event) {
     browserProc.kill('SIGINT');
     browserProc.once('exit', function() {
       if (event.failed) return process.exit(1);
@@ -71,4 +80,3 @@ io.of('/test').on('connection', function(socket) {
     });
   });
 });
-
