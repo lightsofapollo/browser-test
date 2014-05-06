@@ -1,0 +1,6 @@
+1..2
+# LOG: I CREATE THE LOG - (http://localhost:54308/test/browser/log.html?url=ws%3A%2F%2Flocalhost%3A54308%2Ftest:11:1)
+ok 1 start one
+# PASSED: 1
+# PENDING: 0
+# FAILED: 0

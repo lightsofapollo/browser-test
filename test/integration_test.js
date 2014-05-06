@@ -2,6 +2,8 @@ suite('integration test', function() {
   var assert = require('assert');
   var parser = require('tap-parser');
   var spawn  = require('child_process').spawn;
+  var exec = require('child_process').exec;
+  var fs = require('fs');
 
   function verify(flags, tapOutput, exitCode, done) {
     var proc = spawn(
@@ -64,6 +66,27 @@ suite('integration test', function() {
       'entrypoint',
       1,
       done
+    );
+  });
+
+  test('log.html', function(done) {
+    // XXX: Big ugly hack to strip the variants in the output
+    function stripLocalhost(string) {
+      return string.
+        replace(/localhost:([0-9]+)/, '').
+        replace(/url=(.*)/, '');
+    }
+
+    exec(
+      __dirname + '/../bin/browser-test test/browser/log.html',
+      function(err, stdout) {
+        if (err) return done(err);
+        assert.equal(
+          stripLocalhost(fs.readFileSync(__dirname + '/browser/log_expected.txt', 'utf8').trim()),
+          stripLocalhost(stdout.trim())
+        );
+        done();
+      }
     );
   });
 });
