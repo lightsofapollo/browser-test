@@ -1,0 +1,74 @@
+#! /usr/bin/env node --harmony
+
+var koa = require('koa');
+var socketio = require('socket.io');
+var static = require('koa-static');
+var tap = require('../reporter/tap');
+var program = require('commander');
+
+program.
+  // XXX: This setting is purely for proof of concept
+  option(
+    '--entrypoint <file.html>',
+    'entrypoint for the test (an html file)'
+  ).
+  usage('$1 <test.js|html>').
+  parse(process.argv);
+
+var app = koa();
+
+// XXX: We should be able to use any server or none at all based on command line
+//     flags
+app.use(static(process.cwd()));
+
+var server = app.listen(0);
+var io = socketio(server);
+
+// XXX: Allow passing domains, etc...
+var port = server.address().port;
+var serverUrl = 'http://localhost:' + port;
+var wsUrl = 'ws://localhost:' + port + '/test';
+
+
+var queryString = require('querystring');
+var url = require('url');
+
+function resolveLanchUrl(server, entrypoint, test, ws) {
+  var config = { url: ws };
+
+  if (entrypoint) {
+    config.test = url.resolve('/', test);
+    return url.resolve(server, entrypoint) + '?' + queryString.stringify(config);
+  }
+
+  return url.resolve(server, test) + '?' + queryString.stringify(config);
+}
+
+var launchUrl =
+  resolveLanchUrl(serverUrl, program.entrypoint, program.args[0], wsUrl);
+
+// XXX: Obviously this should be configurable (or even just a call to open on
+// OSX)
+var launcher = __dirname + '/../launcher/firefox';
+var spawn = require('child_process').spawn;
+var browserProc = spawn(
+  launcher,
+  [launchUrl],
+  {
+    env: process.env,
+    stdio: 'inherit'
+  }
+);
+
+
+io.of('/test').on('connection', function(socket) {
+  tap(socket, process.stdout);
+  socket.once('finished', function(event) {
+    browserProc.kill('SIGINT');
+    browserProc.once('exit', function() {
+      if (event.failed) return process.exit(1);
+      process.exit();
+    });
+  });
+});
+

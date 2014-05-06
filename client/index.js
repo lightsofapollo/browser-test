@@ -3,23 +3,25 @@ var qs = require('querystring');
 var config = qs.parse(document.location.search);
 
 function buildClient() {
-  var config = qs.parse(document.location.search);
+  var queryParams = qs.parse(document.location.search);
+  var config = {
+    fileName: queryParams.test
+  };
 
-  if (!config.url) {
+  if (!queryParams.url) {
     console.error('browser-test: url query param is not set');
-    return client();
+    return client(config);
   }
 
   if (!window.io) {
     console.error('browser-test: `io` is not available on window... include socket.io');
-    return client();
+    return client(config);
   }
 
-  console.log('browser-test: enabled connecting to', config.url);
+  console.log('browser-test: enabled connecting to', queryParams.url);
 
-  return client({
-    io: io(config.url)
-  });
+  config.io = io(queryParams.url);
+  return client(config);
 }
 
 module.exports = buildClient();

@@ -28,7 +28,7 @@ function queueEmits(io) {
 
 function client(config) {
   // check for the socket.io configuration
-  var io = config && config.io;
+  var io = config.io;
   var emit;
 
   if (io) {
@@ -54,6 +54,7 @@ function client(config) {
   ]
 
   */
+  var currentFileName = config.fileName;
   var currentState = 'none';
   var currentSuite = null; // current suite in the state machine
   var currentTest = null; // current test in the state machine
@@ -65,6 +66,10 @@ function client(config) {
   }
 
   return {
+
+    get fileName() {
+      return currentFileName;
+    },
 
     get test() {
       return currentTest;
@@ -78,7 +83,7 @@ function client(config) {
       return currentState;
     },
 
-    createSuite: function(total, filename, start) {
+    createSuite: function(total, start) {
       assert(
         currentState === 'none',
         'cannot create multiple suites'
@@ -87,7 +92,7 @@ function client(config) {
       currentState = 'suite';
       currentSuite = {
         total: total,
-        filename: filename,
+        filename: currentFileName,
         start: start || new Date(),
         finished: null,
         pending: 0,
@@ -116,7 +121,6 @@ function client(config) {
     },
 
     failTest: function(error, finished) {
-      console.log(currentState, '<<<! state', error);
       assert(currentState === 'test', 'fail - not in a test');
 
       currentTest.finished = finished || new Date();

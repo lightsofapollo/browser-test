@@ -58,7 +58,10 @@ co(function*() {
 
   var firefoxProc = spawn(
     firefox,
-    ['--profile', profileDir, process.argv[2]],
+    [
+      '--profile', profileDir,
+      process.argv[2]
+    ],
     {
       env: process.env,
       stdio: 'inherit'
@@ -69,6 +72,7 @@ co(function*() {
   var intendedExit = false;
 
   process.once('SIGINT', function() {
+    firefoxProc.kill();
     intendedExit = true;
   });
 

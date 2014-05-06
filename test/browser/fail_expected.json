@@ -1,0 +1,35 @@
+{
+  "ok": false,
+  "asserts": [
+    {
+      "ok": true,
+      "number": 1,
+      "name": "start one"
+    },
+    {
+      "ok": false,
+      "number": 2,
+      "name": "fail one"
+    }
+  ],
+  "pass": [
+    {
+      "ok": true,
+      "number": 1,
+      "name": "start one"
+    }
+  ],
+  "fail": [
+    {
+      "ok": false,
+      "number": 2,
+      "name": "fail one"
+    }
+  ],
+  "todo": [],
+  "errors": [],
+  "plan": {
+    "start": 1,
+    "end": 2
+  }
+}

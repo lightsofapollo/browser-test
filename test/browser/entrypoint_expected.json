@@ -1,0 +1,35 @@
+{
+  "ok": false,
+  "asserts": [
+    {
+      "ok": true,
+      "number": 1,
+      "name": "mocha js test woot"
+    },
+    {
+      "ok": false,
+      "number": 2,
+      "name": "mocha js test fail"
+    }
+  ],
+  "pass": [
+    {
+      "ok": true,
+      "number": 1,
+      "name": "mocha js test woot"
+    }
+  ],
+  "fail": [
+    {
+      "ok": false,
+      "number": 2,
+      "name": "mocha js test fail"
+    }
+  ],
+  "todo": [],
+  "errors": [],
+  "plan": {
+    "start": 1,
+    "end": 2
+  }
+}
