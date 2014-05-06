@@ -1,0 +1,23 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+  <title>body</title>
+</head>
+<body>
+<script src="/socket.io/socket.io.js"></script>
+<script src="/build/browser_test.js" type="text/javascript" charset="utf-8"></script>
+<script type="text/javascript" charset="utf-8">
+browserTest.createSuite(2, 'fail.html');
+
+browserTest.createTest('start one', new Date());
+browserTest.passTest();
+
+browserTest.createTest('fail one', new Date());
+browserTest.failTest(new Error('failed in firefox damn'));
+
+browserTest.finishSuite(new Date());
+</script>
+</body>
+</html>
+
