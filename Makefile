@@ -13,3 +13,6 @@ watch:
 .PHONY: test
 test: build/browser_test.js
 	./node_modules/.bin/mocha test/integration_test
+
+doc:
+	./node_modules/.bin/jsdoc -c jsdoc.json -d doc README.md

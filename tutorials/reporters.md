@@ -1,8 +1,35 @@
-# Reporter Spec
+# Reporters
 
 The reporter spec is based on the original [mocha](https://github.com/visionmedia/mocha/tree/master/lib/reporters) design but does not conform exactly and it has a stricter/more minimalistic set of properties.
 
+## Interface
+
+```js
+// a quick example of a reporter module the intent is that these should
+// be pluggable.
+
+/**
+@param {EventEmitter} incoming - events from the browser
+@param {WritableStream} output - suitable for stdout and the like
+*/
+function createReporter(incoming, output) {
+  incoming.once('started', function(event) {
+    output.write('No meaningful output for your foo!\n');
+  });
+
+  incoming.once('finished', function(event) {
+    output.write('I am done!\n');
+  });
+}
+
+module.exports = createReporter;
+
+```
+
 ## Events
+
+These events are emitted by the first argument to the reporter (the
+incoming data)
 
 ### `started`
 

@@ -1,18 +1,30 @@
 {
   "name": "browser-test",
-  "version": "0.0.0",
+  "version": "0.0.0-alpha",
   "main": "index.js",
   "scripts": {
     "test": "make test",
     "prepublish": "make"
   },
-  "author": "",
-  "license": "ISC",
+  "bin": {
+    "browser-test": "./bin/browser-test"
+  },
+  "description": "Streamlined browser test runner",
+  "keywords": [
+    "test",
+    "browser",
+    "mocha",
+    "test-agent"
+  ],
+  "author": "James Lal [:lightsofapollo]",
+  "license": "MIT",
   "dependencies": {
     "co": "^3.0.6",
+    "co-fs": "^1.2.0",
     "commander": "^2.2.0",
     "debug": "^0.8.1",
     "koa": "^0.6.0",
+    "koa-mount": "^1.2.5",
     "koa-static": "^1.4.4",
     "promise": "^5.0.0",
     "tmp": "0.0.23",
@@ -22,7 +34,9 @@
     "node": ">= 0.11.2"
   },
   "devDependencies": {
-    "tap-parser": "^0.5.0",
-    "mocha": "^1.18.2"
+    "jsdoc": "git://github.com/jsdoc3/jsdoc.git#1566421a62b3c15bdaef14d38761de5c6648cb5e",
+    "ink-docstrap": "^0.3.0-0",
+    "mocha": "^1.18.2",
+    "tap-parser": "^0.5.0"
   }
 }

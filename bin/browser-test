@@ -3,11 +3,11 @@
 var WSServer = require('websocket').server;
 
 var koa = require('koa');
-var socketio = require('socket.io');
 var static = require('koa-static');
 var mount = require('koa-mount');
 var tap = require('../reporter/tap');
 var program = require('commander');
+var fs = require('fs');
 var wsReader = require('../server/ws_emitter');
 
 program.
@@ -16,8 +16,37 @@ program.
     '--entrypoint <file.html>',
     'entrypoint for the test (an html file)'
   ).
-  usage('$1 <test.js|html>').
-  parse(process.argv);
+  usage('$1 <test.js|html>');
+
+// clone argv
+var argv = process.argv.concat([]);
+
+try {
+  var opts = fs.readFileSync('browser-test.opts', 'utf8')
+    .trim()
+    .split(/\s+/);
+
+  argv = argv.
+    slice(0, 2).
+    concat(opts.concat(process.argv.slice(2)));
+} catch (err) {
+  // ignore
+}
+
+program.parse(argv);
+
+// ghetto support for opts files
+if (fs.existsSync(process.cwd() + '/browser-test.opts')) {
+  var extra = argv.concat(
+    fs.readFileSync(process.cwd() + '/browser-test.opts', 'utf8').
+      replace('\r', '').
+      split('\n')
+  );
+
+  argv.splice()
+}
+
+program.parse(argv);
 
 var app = koa();
 

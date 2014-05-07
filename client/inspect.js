@@ -18,6 +18,12 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+
+/**
+@module browser-test/inspect
+*/
+
 var formatRegExp = /%[sdj%]/g;
 exports.format = function(f) {
   if (typeof f !== 'string') {
