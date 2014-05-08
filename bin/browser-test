@@ -16,7 +16,11 @@ program.
     '--entrypoint <file.html>',
     'entrypoint for the test (an html file)'
   ).
-  usage('$1 <test.js|html>');
+  option(
+    '--debug',
+    'Keep the launcher process alive even after the test finishes'
+  ).
+  usage('<test.js|html>');
 
 // clone argv
 var argv = process.argv.concat([]);
@@ -97,9 +101,13 @@ var browserProc = spawn(
   }
 );
 
-ws.once('connect', function(socket) {
+ws.on('connect', function(socket) {
   var emitter = wsReader(socket);
   tap(emitter, process.stdout);
+
+  // if in the debug mode keep everything alive we want to keep the process
+  // going...
+  if (program.debug) return;
 
   emitter.once('finished', function(event) {
     browserProc.kill('SIGINT');
