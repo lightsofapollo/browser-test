@@ -3,7 +3,13 @@ BUILD_ARGS := -s browserTest -n browser_test
 
 default: build/browser_test.js
 
-build/browser_test.js: $(SRC)
+node_modules: package.json
+	npm install
+
+components: node_modules
+	./node_modules/.bin/component install
+
+build/browser_test.js: components $(SRC)
 	./node_modules/.bin/component build $(BUILD_ARGS)
 
 .PHONY: watch
