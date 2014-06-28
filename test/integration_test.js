@@ -1,14 +1,18 @@
 suite('integration test', function() {
   var assert = require('assert');
+  var fork = require('child_process').fork;
   var parser = require('tap-parser');
-  var spawn  = require('child_process').spawn;
   var exec = require('child_process').exec;
   var fs = require('fs');
 
   function verify(flags, tapOutput, exitCode, done) {
-    var proc = spawn(
+    var proc = fork(
       __dirname + '/../bin/browser-test',
-      flags
+      flags,
+      {
+        env: { 'DEBUG': 'browser-test:*' },
+        execArgv: ['--harmony']
+      }
     );
 
     var tapObject;
