@@ -67,3 +67,19 @@ to poorly written/leaky tests).
 
       * really easy to write adapters for other frameworks but none
         intended to be directly bundled into the framework.
+
+# Developing
+
+Build the project:
+
+```sh
+npm install
+make
+```
+
+Test the project:
+
+```js
+npm install
+make test
+```
