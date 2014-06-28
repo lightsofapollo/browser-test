@@ -21,7 +21,7 @@
     });
 
     runner.on('test', function(event) {
-      browserTest.createTest(event.title);
+      browserTest.createTest(event.fullTitle());
     });
 
     runner.on('pass', function(event) {
@@ -33,7 +33,7 @@
     });
 
     runner.on('pending', function(event) {
-      browserTest.createTest(event.title);
+      browserTest.createTest(event.fullTitle());
       browserTest.pendingTest();
     });
 

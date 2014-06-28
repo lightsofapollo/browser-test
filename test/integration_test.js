@@ -57,7 +57,7 @@ suite('integration test', function() {
     );
   });
 
-  test('entrypoint.html',function (done) {
+  test.only('entrypoint.html',function (done) {
     verify(
       [
         '--entrypoint', 'test/browser/entrypoint.html',
