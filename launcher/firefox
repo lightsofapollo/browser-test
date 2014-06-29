@@ -1,4 +1,4 @@
-#! /usr/bin/env node --harmony
+#! /usr/bin/env node
 
 var co = require('co');
 var debug = require('debug')('browser-test:launcher:firefox');
@@ -28,7 +28,6 @@ function* which() {
 }
 
 co(function*() {
-
   if (!process.argv[2]) {
     console.error('First argument must be a url');
     return process.exit(1);
@@ -38,7 +37,8 @@ co(function*() {
   var url = process.argv[2];
 
   // find firefox
-  var firefox = null;
+  debug('Will spawn Firefox.');
+  var firefox = yield which();
   if (!firefox) {
     debug('could not find firefox via which falling back to constants');
     firefox = yield searchCommon();
@@ -49,6 +49,8 @@ co(function*() {
     process.exit(1);
     return;
   }
+
+  debug('Found ' + firefox);
 
   // profile directory must be a clean tmp directory
   var profileDir = yield tmpDir({

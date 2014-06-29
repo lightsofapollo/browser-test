@@ -1,4 +1,4 @@
-#! /usr/bin/env node --harmony
+#! /usr/bin/env node
 
 var WSServer = require('websocket').server;
 
@@ -91,12 +91,13 @@ var launchUrl =
 // XXX: Obviously this should be configurable (or even just a call to open on
 // OSX)
 var launcher = __dirname + '/../launcher/firefox';
-var spawn = require('child_process').spawn;
-var browserProc = spawn(
+var fork = require('child_process').fork;
+var browserProc = fork(
   launcher,
   [launchUrl],
   {
     env: process.env,
+    execArgs: ['--harmony'],
     stdio: 'inherit'
   }
 );
