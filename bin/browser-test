@@ -1,26 +1,28 @@
-#! /usr/bin/env node --harmony
+#!/usr/bin/env node
 
+var Static = require('koa-static');
 var WSServer = require('websocket').server;
-
-var koa = require('koa');
-var static = require('koa-static');
-var mount = require('koa-mount');
-var tap = require('../reporter/tap');
-var program = require('commander');
 var fs = require('fs');
+var koa = require('koa');
+var mount = require('koa-mount');
+var program = require('commander');
+var queryString = require('querystring');
+var spawn = require('child_process').spawn;
+var tap = require('../reporter/tap');
+var url = require('url');
 var wsReader = require('../server/ws_emitter');
 
-program.
+program
   // XXX: This setting is purely for proof of concept
-  option(
+  .option(
     '--entrypoint <file.html>',
     'entrypoint for the test (an html file)'
-  ).
-  option(
+  )
+  .option(
     '--debug',
     'Keep the launcher process alive even after the test finishes'
-  ).
-  usage('<test.js|html>');
+  )
+  .usage('<test.js|html>');
 
 // clone argv
 var argv = process.argv.concat([]);
@@ -30,9 +32,9 @@ try {
     .trim()
     .split(/\s+/);
 
-  argv = argv.
-    slice(0, 2).
-    concat(opts.concat(process.argv.slice(2)));
+  argv = argv
+    .slice(0, 2)
+    .concat(opts.concat(process.argv.slice(2)));
 } catch (err) {
   // ignore
 }
@@ -54,11 +56,10 @@ program.parse(argv);
 
 var app = koa();
 
-// the client specific to this version of browser test
-app.use(mount('/browser_test/', static(__dirname + '/../build')));
+app.use(mount('/browser_test/', Static(__dirname + '/..')));
 
 // default simple server just serves up current folder
-app.use(static(process.cwd()));
+app.use(Static(process.cwd()));
 
 var server = app.listen(0);
 var ws = new WSServer({
@@ -70,9 +71,6 @@ var ws = new WSServer({
 var port = server.address().port;
 var serverUrl = 'http://localhost:' + port;
 var wsUrl = 'ws://localhost:' + port + '/test';
-
-var queryString = require('querystring');
-var url = require('url');
 
 function resolveLanchUrl(server, entrypoint, test, ws) {
   var config = { url: ws };
@@ -91,7 +89,6 @@ var launchUrl =
 // XXX: Obviously this should be configurable (or even just a call to open on
 // OSX)
 var launcher = __dirname + '/../launcher/firefox';
-var spawn = require('child_process').spawn;
 var browserProc = spawn(
   launcher,
   [launchUrl],

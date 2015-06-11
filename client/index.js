@@ -1,15 +1,16 @@
 var client = require('./client');
-var createSocket = require('./socket');
 var createLogger = require('./console');
-
+var createSocket = require('./socket');
 var qs = require('querystring');
-var config = qs.parse(document.location.search);
 
 function buildClient() {
-  var queryParams = qs.parse(document.location.search);
-  var config = {
-    fileName: queryParams.test
-  };
+  var search = decodeURIComponent(document.location.search);
+  if (search.charAt(0) === '?') {
+    search = search.substring(1);
+  }
+
+  var queryParams = qs.parse(search);
+  var config = { fileName: queryParams.test };
 
   if (!queryParams.url) {
     console.error('browser-test: url query param is not set');
