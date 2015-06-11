@@ -1,7 +1,8 @@
-var TYPES = ['log', 'error', 'info'];
 var exportError = require('./export_error');
-var stackPosition = /\(([^()]+)\)/gm
 var inspect = require('./inspect');
+
+var TYPES = ['log', 'error', 'info'];
+var stackPosition = /\(([^()]+)\)/gm;
 
 function stackTrace() {
   var e = exportError(new Error());
@@ -25,4 +26,3 @@ function overloadConsole(socket) {
 }
 
 module.exports = overloadConsole;
-

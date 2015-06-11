@@ -1,5 +1,7 @@
 # Browser Test
 
+[![Build Status](https://travis-ci.org/lightsofapollo/browser-test.png?branch=master)](https://travis-ci.org/lightsofapollo/browser-test)
+
 Browser test is in alpha phase... the intent is to provide the best possible out
 of the box testing experience for browsers (just firefox right now) with
 minimal magic and easy client interface so everyone can use their

@@ -1,15 +1,15 @@
-#! /usr/bin/env node --harmony
+#!/usr/bin/env node
 
 var co = require('co');
+var denodeify = require('promise').denodeify;
 var debug = require('debug')('browser-test:launcher:firefox');
-var Promise = require('promise');
+var exec = denodeify(require('child_process').exec);
 var fs = require('co-fs');
-var exec = require('child_process').exec;
-var tmpDir = Promise.denodeify(require('tmp').dir);
+var profile = denodeify(require('mozilla-profile-builder').create);
 var spawn = require('child_process').spawn;
 
 var COMMON_PATHS = [
-  // XXX: Only common paths included for OSX... on linux which should work just
+  // XXX: Only common paths included for OSX... on linux should work just
   // fine.
   '/Applications/FirefoxNightly.app/Contents/MacOS/firefox',
   '/Applications/FirefoxAurora.app/Contents/MacOS/firefox',
@@ -24,11 +24,10 @@ function* searchCommon() {
 }
 
 function* which() {
-  return yield Promise.denodeify(exec)('which firefox');
+  return yield exec('which firefox');
 }
 
 co(function*() {
-
   if (!process.argv[2]) {
     console.error('First argument must be a url');
     return process.exit(1);
@@ -38,8 +37,10 @@ co(function*() {
   var url = process.argv[2];
 
   // find firefox
-  var firefox = null;
-  if (!firefox) {
+  var firefox = yield which();
+  if (firefox) {
+    firefox = 'firefox';
+  } else {
     debug('could not find firefox via which falling back to constants');
     firefox = yield searchCommon();
   }
@@ -50,23 +51,15 @@ co(function*() {
     return;
   }
 
-  // profile directory must be a clean tmp directory
-  var profileDir = yield tmpDir({
-    // don't keep around directories
-    unsafeCleanup: true
+  var profileDir = yield profile({});
+  var firefoxProc = spawn(firefox, [
+    '--no-remote',
+    '--profile', profileDir.path,
+    process.argv[2]
+  ], {
+    env: process.env,
+    stdio: 'inherit'
   });
-
-  var firefoxProc = spawn(
-    firefox,
-    [
-      '--profile', profileDir,
-      process.argv[2]
-    ],
-    {
-      env: process.env,
-      stdio: 'inherit'
-    }
-  );
 
   // crash detection logic
   var intendedExit = false;

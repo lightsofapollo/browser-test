@@ -2,8 +2,8 @@
 @module browser-test/client
 */
 
-var exportError = require('./export_error');
 var debug = require('debug');
+var exportError = require('./export_error');
 
 function assert(truthy, message) {
   // cast value to boolean
