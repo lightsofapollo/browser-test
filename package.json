@@ -45,6 +45,8 @@
     "node": ">=1.0"
   },
 
+  "engineStrict": "true",
+
   "keywords": [
     "test",
     "browser",
