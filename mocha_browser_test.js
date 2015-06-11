@@ -5,9 +5,9 @@
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
-    define(['exports', 'browser-test'], factory);
+    define(['exports', 'browser_test'], factory);
   } else if (typeof exports === 'object') {
-    factory(exports, require('browser-test'));
+    factory(exports, require('browser_test'));
   } else {
     factory((root.mochaBrowserTest = {}), root.browserTest);
   }
@@ -17,7 +17,7 @@
    */
   exports.createReporter = function(runner) {
     runner.on('start', function(event) {
-      browserTest.createSuite(this.total, 'mocha.html');
+      browserTest.createSuite(this.total);
     });
 
     runner.on('test', function(event) {
