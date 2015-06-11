@@ -16,6 +16,7 @@
   },
 
   "dependencies": {
+    "browserify": "^10.2.4",
     "co": "^3.0.6",
     "co-fs": "^1.2.0",
     "commander": "^2.2.0",
@@ -30,7 +31,6 @@
   },
 
   "devDependencies": {
-    "browserify": "^10.2.4",
     "ink-docstrap": "^0.3.0-0",
     "jsdoc": "git://github.com/jsdoc3/jsdoc.git#1566421a62b3c15bdaef14d38761de5c6648cb5e",
     "mocha": "^1.18.2",
