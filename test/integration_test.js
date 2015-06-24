@@ -23,7 +23,7 @@ suite('integration test', function() {
         var expected = require('./browser/' + tapOutput + '_expected.json');
         assert.equal(code, exitCode);
         assert.deepEqual(expected, tapObject);
-        done()
+        done();
       } catch(e) {
         done(e);
       }
