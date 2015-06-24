@@ -1,10 +1,9 @@
 {
   "name": "browser-test",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "James Lal [:lightsofapollo]",
   "description": "Streamlined browser test runner",
   "license": "MIT",
-  "main": "index.js",
 
   "bin": {
     "browser-test": "./bin/browser-test"
