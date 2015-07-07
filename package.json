@@ -10,7 +10,7 @@
   },
 
   "scripts": {
-    "postinstall": "./node_modules/.bin/browserify client/index.js -s browserTest > browser_test.js",
+    "prepublish": "./node_modules/.bin/browserify client/index.js -s browserTest > browser_test.js",
     "test": "./node_modules/.bin/mocha test/integration_test"
   },
 
@@ -20,6 +20,7 @@
     "co-fs": "^1.2.0",
     "commander": "^2.2.0",
     "debug": "^0.8.1",
+    "diff": "1.4.0",
     "koa": "^0.6.0",
     "koa-mount": "^1.2.5",
     "koa-static": "^1.4.4",
